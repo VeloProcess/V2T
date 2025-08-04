@@ -1,9 +1,13 @@
 // =================================================================
 // ARQUIVO: script.js
-// DESCRIÇÃO: Lógica do frontend para o fluxo de duas etapas
+// DESCRIÇÃO: Lógica do frontend com URL do script embutida
 // =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- CONFIGURAÇÃO ---
+    // AÇÃO: Cole a URL de implantação do seu Google Apps Script aqui
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwFQyQ32YtSolrOwi-MXgEvYdo-Z6NJRNwaS3SZERcUKmjTj2ntkl96uzmZb2h5RWtQlw/exec';
+
     // --- ELEMENTOS DO DOM ---
     const formContainer = document.getElementById('formContainer');
     const buscaForm = document.getElementById('buscaForm');
@@ -29,9 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnNovaBusca.addEventListener('click', resetToBusca);
     btnTentarNovamente.addEventListener('click', resetToBusca);
     
-    // Carregar URL salva do localStorage
-    loadSettings();
-    document.getElementById('gasUrl').addEventListener('blur', saveSettings);
     // Definir data atual
     document.getElementById('data').value = new Date().toISOString().split('T')[0];
 
@@ -44,11 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formData = {
             data: document.getElementById('data').value,
             nomeCompleto: document.getElementById('nomeCompleto').value,
-            gasUrl: document.getElementById('gasUrl').value,
             action: 'get_links' // Ação para buscar links
         };
         
-        if (!formData.data || !formData.nomeCompleto || !formData.gasUrl) {
+        if (!formData.data || !formData.nomeCompleto) {
             showError('Por favor, preencha todos os campos.');
             return;
         }
@@ -56,14 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setLoadingState(true, 'Buscando...');
 
         try {
-            const response = await fetch(formData.gasUrl, {
+            const response = await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    data: formData.data,
-                    nomeCompleto: formData.nomeCompleto,
-                    action: formData.action
-                }),
+                body: JSON.stringify(formData),
                 mode: 'cors'
             });
 
@@ -80,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Erro ao buscar links:', error);
-            showError('Erro de conexão ao buscar links.', error.message);
+            showError('Erro de conexão ao buscar links.', 'Verifique se a URL no arquivo script.js está correta e se o script foi implantado corretamente.');
         } finally {
             setLoadingState(false, 'Buscar Ligações');
         }
@@ -94,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startTime = Date.now();
         
         try {
-            const response = await fetch(formData.gasUrl, {
+            const response = await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -133,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         links.forEach(call => {
             const button = document.createElement('button');
             button.className = 'link-button';
-            // Formata a exibição do horário, se for um objeto Date ou string
             const displayTime = call.time instanceof Object ? new Date(call.time).toLocaleTimeString('pt-BR') : call.time;
             button.textContent = `Ligação das ${displayTime}`;
             button.addEventListener('click', () => handleTranscricaoSubmit(call.link));
@@ -188,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetToBusca() {
         buscaForm.reset();
         document.getElementById('data').value = new Date().toISOString().split('T')[0];
-        loadSettings();
         
         formContainer.style.display = 'block';
         linksContainer.style.display = 'none';
@@ -197,16 +191,5 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setLoadingState(false, 'Buscar Ligações');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function saveSettings() {
-        localStorage.setItem('transcricao_gas_url', document.getElementById('gasUrl').value);
-    }
-
-    function loadSettings() {
-        const savedUrl = localStorage.getItem('transcricao_gas_url');
-        if (savedUrl) {
-            document.getElementById('gasUrl').value = savedUrl;
-        }
     }
 });
