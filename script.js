@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURAÇÃO ---
     // AÇÃO: Cole a URL de implantação do seu Google Apps Script aqui
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxOYikpqABdmXHXhPKPhoURXht8TBC__9wA5xT8eBug3v9ErNGxJFu5s-Ti_-WOycbE/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwsV28thIOgXhcXYYviqgE5RjCf7zA9KjdqUU7D59NTxvKbqNc8xC1H4DftyoyNlX10BQ/exec';
 
     // --- ELEMENTOS DO DOM ---
     const formContainer = document.getElementById('formContainer');
