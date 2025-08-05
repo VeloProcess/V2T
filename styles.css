@@ -122,33 +122,10 @@ header p {
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
-.btn-primary:active {
-    transform: translateY(0);
-}
-
 .btn-primary:disabled {
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
-}
-
-.btn-config {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: #f7fafc;
-    border: 2px solid #e2e8f0;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    color: #4a5568;
-}
-
-.btn-config:hover {
-    background: #edf2f7;
-    border-color: #cbd5e0;
 }
 
 .loading-spinner {
@@ -161,84 +138,8 @@ header p {
     margin: 0 auto;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 0;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    padding: 25px 30px 15px;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    color: #4a5568;
-    font-size: 1.4rem;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #718096;
-    padding: 5px;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-    background: #f7fafc;
-    color: #4a5568;
-}
-
-.modal-body {
-    padding: 25px 30px 30px;
-}
-
-/* Resultados */
 .result-card {
     background: white;
     border-radius: 20px;
@@ -277,144 +178,16 @@ header p {
     border-radius: 12px;
     line-height: 1.8;
     color: #4a5568;
-    white-space: pre-wrap; /* Mantém as quebras de linha do resumo */
-}
-
-.transcription-text {
+    white-space: pre-wrap;
     background: #f7fafc;
     border: 1px solid #e2e8f0;
-    font-family: 'Courier New', monospace;
 }
 
-.summary-text {
-    background: #edf2f7;
-    border: 1px solid #cbd5e0;
-}
-
-/* Info Section */
-.info-section {
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    padding: 30px;
-    backdrop-filter: blur(10px);
-}
-
-.info-section h3 {
-    color: #4a5568;
-    margin-bottom: 25px;
-    font-size: 1.5rem;
-}
-
-.steps {
-    display: grid;
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.step {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.step-number {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    flex-shrink: 0;
-}
-
-.step-content h4 {
-    color: #4a5568;
-    margin-bottom: 5px;
-    font-size: 1.1rem;
-}
-
-.step-content p {
-    color: #718096;
-    line-height: 1.5;
-}
-
-.requirements {
-    background: #f7fafc;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-}
-
-.requirements h4 {
-    color: #4a5568;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-.requirements ul {
-    list-style: none;
-    padding: 0;
-}
-
-.requirements li {
-    color: #718096;
-    margin-bottom: 8px;
-    padding-left: 20px;
-    position: relative;
-}
-
-.requirements li:before {
-    content: "✓";
-    color: #48bb78;
-    font-weight: bold;
-    position: absolute;
-    left: 0;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-    
-    header h1 {
-        font-size: 2rem;
-    }
-    
-    .card {
-        padding: 25px;
-    }
-    
-    .modal-content {
-        width: 95%;
-        margin: 5% auto;
-    }
-    
-    .btn-config {
-        position: static;
-        margin-top: 20px;
-        width: 100%;
-    }
-}
-
-/* Estados de erro e sucesso */
 .error {
     background: #fed7d7;
     color: #c53030;
     padding: 15px;
     border-radius: 12px;
     border: 1px solid #feb2b2;
-    margin-top: 15px;
-}
-
-.success {
-    background: #c6f6d5;
-    color: #2f855a;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #9ae6b4;
     margin-top: 15px;
 }
