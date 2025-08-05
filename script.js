@@ -1,195 +1,137 @@
-// =================================================================
-// ARQUIVO: script.js
-// DESCRIÇÃO: Lógica do frontend com URL do script embutida
-// =================================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMT4wSEWWC5-f-8K5MM8Ug1TGim2AvXexX4FAIIPgNaQnH68r63RRYolESNWP5nJGpPA/exec';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // --- CONFIGURAÇÃO ---
-    // AÇÃO: Cole a URL de implantação do seu Google Apps Script aqui
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycby1eof3DCaX4-zkbJ1BJG4FbDbtcqiHAug14A1HAktlVzaMQ7cjcNeuvappS3Xlco55bw/exec';
+document.addEventListener('DOMContentLoaded', function() {
+  var loginForm = document.getElementById('login-form');
+  var searchForm = document.getElementById('search-form');
+  var callsList = document.getElementById('calls-list');
+  var resultDiv = document.getElementById('result');
+  var usernameInput = document.getElementById('username');
+  var passwordInput = document.getElementById('password');
+  var loginBtn = document.getElementById('login-btn');
+  var dateInput = document.getElementById('date');
+  var attendantInput = document.getElementById('attendant');
+  var searchBtn = document.getElementById('search-btn');
+  var callsSelect = document.getElementById('calls-select');
+  var transcribeBtn = document.getElementById('transcribe-btn');
+  var audioPlayer = document.getElementById('audio-player');
+  var outputDiv = document.getElementById('output');
+  var loadingDiv = document.getElementById('loading');
 
-    // --- ELEMENTOS DO DOM ---
-    const formContainer = document.getElementById('formContainer');
-    const buscaForm = document.getElementById('buscaForm');
-    const btnBuscar = document.getElementById('btnBuscar');
-    const loadingSpinner = document.querySelector('.loading-spinner');
-    const btnText = document.querySelector('.btn-text');
+  // Preenche a data atual
+  var today = new Date();
+  dateInput.value = today.getDate().toString().padStart(2, '0') + '/' +
+                   (today.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                   today.getFullYear();
 
-    const linksContainer = document.getElementById('linksContainer');
-    const linksList = document.getElementById('linksList');
-    const btnVoltarBusca = document.getElementById('btnVoltarBusca');
-
-    const resultadoContainer = document.getElementById('resultadoContainer');
-    const erroContainer = document.getElementById('erroContainer');
-    const btnNovaBusca = document.getElementById('btnNovaBusca');
-    const btnTentarNovamente = document.getElementById('btnTentarNovamente');
-    
-    // --- ESTADO DA APLICAÇÃO ---
-    let formData = {};
-
-    // --- EVENT LISTENERS ---
-    buscaForm.addEventListener('submit', handleBuscaSubmit);
-    btnVoltarBusca.addEventListener('click', resetToBusca);
-    btnNovaBusca.addEventListener('click', resetToBusca);
-    btnTentarNovamente.addEventListener('click', resetToBusca);
-    
-    // Definir data atual
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
-
-    // --- FUNÇÕES PRINCIPAIS ---
-
-    /** ETAPA 1: Lida com o envio do formulário de busca */
-    async function handleBuscaSubmit(event) {
-        event.preventDefault();
-        
-        formData = {
-            data: document.getElementById('data').value,
-            nomeCompleto: document.getElementById('nomeCompleto').value,
-            action: 'get_links' // Ação para buscar links
-        };
-        
-        if (!formData.data || !formData.nomeCompleto) {
-            showError('Por favor, preencha todos os campos.');
-            return;
-        }
-        
-        setLoadingState(true, 'Buscando...');
-
-        try {
-            const response = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-                mode: 'cors'
-            });
-
-            const result = await response.json();
-
-            if (result.sucesso) {
-                if (result.dados && result.dados.length > 0) {
-                    displayCallLinks(result.dados);
-                } else {
-                    showError(`Nenhuma ligação encontrada para ${formData.nomeCompleto} na data selecionada.`);
-                }
-            } else {
-                showError(result.mensagem, result.detalhes);
-            }
-        } catch (error) {
-            console.error('Erro ao buscar links:', error);
-            showError('Erro de conexão ao buscar links.', 'Verifique se a URL no arquivo script.js está correta e se o script foi implantado corretamente.');
-        } finally {
-            setLoadingState(false, 'Buscar Ligações');
-        }
+  loginBtn.addEventListener('click', function() {
+    if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
+      alert('Preencha usuário e senha.');
+      return;
     }
 
-    /** ETAPA 2: Lida com o clique em um link para transcrever */
-    async function handleTranscricaoSubmit(link) {
-        setLoadingState(true, 'Transcrevendo...');
-        linksContainer.style.display = 'none'; // Esconde a lista de links
+    loadingDiv.classList.remove('hidden');
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'login',
+        username: usernameInput.value,
+        password: passwordInput.value
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(result) {
+      loadingDiv.classList.add('hidden');
+      if (result.success) {
+        loginForm.classList.add('hidden');
+        searchForm.classList.remove('hidden');
+      } else {
+        alert(result.error || 'Login inválido');
+      }
+    })
+    .catch(function(error) {
+      loadingDiv.classList.add('hidden');
+      alert('Erro: ' + error.message);
+    });
+  });
 
-        const startTime = Date.now();
-        
-        try {
-            const response = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    data: formData.data,
-                    nomeCompleto: formData.nomeCompleto,
-                    linkLigacao: link,
-                    action: 'transcribe' // Ação para transcrever
-                }),
-                mode: 'cors'
-            });
-
-            const endTime = Date.now();
-            const duration = ((endTime - startTime) / 1000).toFixed(2);
-            const result = await response.json();
-
-            if (result.sucesso) {
-                showResult(result.dados, duration);
-            } else {
-                showError(result.mensagem, result.detalhes);
-            }
-        } catch (error) {
-            console.error('Erro ao transcrever:', error);
-            showError('Erro de conexão ao transcrever o áudio.', error.message);
-        } finally {
-            setLoadingState(false);
-        }
+  searchBtn.addEventListener('click', function() {
+    if (!dateInput.value.match(/^\d{2}\/\d{2}\/\d{4}$/) || !attendantInput.value.trim()) {
+      alert('Preencha a data (DD/MM/YYYY) e o nome do atendente.');
+      return;
     }
 
-    // --- FUNÇÕES DE UI ---
-
-    function displayCallLinks(links) {
-        formContainer.style.display = 'none';
-        erroContainer.style.display = 'none';
-        linksList.innerHTML = ''; // Limpa a lista anterior
-
-        links.forEach(call => {
-            const button = document.createElement('button');
-            button.className = 'link-button';
-            const displayTime = call.time instanceof Object ? new Date(call.time).toLocaleTimeString('pt-BR') : call.time;
-            button.textContent = `Ligação das ${displayTime}`;
-            button.addEventListener('click', () => handleTranscricaoSubmit(call.link));
-            linksList.appendChild(button);
+    loadingDiv.classList.remove('hidden');
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'search',
+        date: dateInput.value,
+        attendant: attendantInput.value
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(result) {
+      loadingDiv.classList.add('hidden');
+      if (result.error) {
+        alert(result.error);
+      } else {
+        callsSelect.innerHTML = '<option value="">Selecione uma ligação</option>';
+        result.calls.forEach(function(call, index) {
+          var option = document.createElement('option');
+          option.value = call.audioUrl;
+          option.text = 'Ligação às ' + call.time;
+          callsSelect.appendChild(option);
         });
+        searchForm.classList.add('hidden');
+        callsList.classList.remove('hidden');
+      }
+    })
+    .catch(function(error) {
+      loadingDiv.classList.add('hidden');
+      alert('Erro: ' + error.message);
+    });
+  });
 
-        linksContainer.style.display = 'block';
+  transcribeBtn.addEventListener('click', function() {
+    var selectedUrl = callsSelect.value;
+    if (!selectedUrl) {
+      alert('Selecione uma ligação.');
+      return;
     }
 
-    function showResult(dados, duration) {
-        formContainer.style.display = 'none';
-        linksContainer.style.display = 'none';
+    loadingDiv.classList.remove('hidden');
+    audioPlayer.src = selectedUrl;
+    audioPlayer.classList.remove('hidden');
 
-        document.getElementById('resultadoNome').textContent = dados.nomeCompleto;
-        document.getElementById('resultadoData').textContent = new Date(dados.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-        document.getElementById('textoTranscricao').textContent = dados.transcricao || 'N/A';
-        document.getElementById('textoResumo').textContent = dados.resumo || 'N/A';
-        document.getElementById('timestampProcessamento').textContent = new Date(dados.timestamp).toLocaleString('pt-BR');
-        document.getElementById('duracaoProcessamento').textContent = `${duration} segundos`;
-        
-        resultadoContainer.style.display = 'block';
-    }
-
-    function showError(message, details = null) {
-        formContainer.style.display = 'none';
-        linksContainer.style.display = 'none';
-
-        document.getElementById('mensagemErro').textContent = message;
-        const detalhesTexto = document.getElementById('erroDetalhesTexto');
-        if (details) {
-            detalhesTexto.textContent = typeof details === 'object' ? JSON.stringify(details, null, 2) : details;
-            detalhesTexto.style.display = 'block';
-        } else {
-            detalhesTexto.style.display = 'none';
-        }
-        erroContainer.style.display = 'block';
-    }
-
-    function setLoadingState(isLoading, text = 'Buscar Ligações') {
-        btnText.textContent = text;
-        if (isLoading) {
-            btnBuscar.disabled = true;
-            loadingSpinner.style.display = 'block';
-            btnText.style.display = 'none';
-        } else {
-            btnBuscar.disabled = false;
-            loadingSpinner.style.display = 'none';
-            btnText.style.display = 'block';
-        }
-    }
-    
-    function resetToBusca() {
-        buscaForm.reset();
-        document.getElementById('data').value = new Date().toISOString().split('T')[0];
-        
-        formContainer.style.display = 'block';
-        linksContainer.style.display = 'none';
-        resultadoContainer.style.display = 'none';
-        erroContainer.style.display = 'none';
-        
-        setLoadingState(false, 'Buscar Ligações');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'transcribe',
+        audioUrl: selectedUrl
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(result) {
+      loadingDiv.classList.add('hidden');
+      if (result.error) {
+        alert(result.error);
+      } else {
+        var output = 'Transcrição Completa:\n' + result.transcription + '\n\n';
+        output += 'Resumo:\n';
+        output += 'Sentimento: ' + result.summary.sentiment + '\n';
+        output += 'Palavras-chave: ' + (result.summary.keywords.length > 0 ? result.summary.keywords.join(', ') : 'Nenhuma') + '\n';
+        output += 'Trecho Solicitado: ' + result.summary.request;
+        outputDiv.textContent = output;
+        callsList.classList.add('hidden');
+        resultDiv.classList.remove('hidden');
+      }
+    })
+    .catch(function(error) {
+      loadingDiv.classList.add('hidden');
+      alert('Erro: ' + error.message);
+    });
+  });
 });
