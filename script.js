@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Não se esqueça de adicionar /api no final!
 
-    const backendUrl = 'https://script.google.com/macros/s/AKfycbxQsQ5QP-P5UrzAtEDQqjeOPcp6QnuBXtFP0FfMT5GzbnCXsmwQP0C62Ram914onki0/exec';
+    const backendUrl = 'https://backend-transcricao-node.vercel.app/api';
 
 
 
