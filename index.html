@@ -1,41 +1,117 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transcrição 55PBX</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Transcrição 55PBX</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Transcrição 55PBX</h1>
-    <div id="login-form" class="form card">
-      <label for="username">Usuário</label>
-      <input type="text" id="username" placeholder="Ex: admin">
-      <label for="password">Senha</label>
-      <input type="password" id="password" placeholder="Senha">
-      <button id="login-btn">Entrar</button>
+    <div class="container">
+        <header>
+            <h1>Sistema de Transcrição 55PBX</h1>
+            <p>Busca automática na planilha e transcrição de áudio</p>
+            <div class="powered-by">Powered by Google Apps Script & Google Cloud AI</div>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>Consultar Transcrição</h2>
+                <p class="subtitle">Insira apenas a data e o nome do atendente</p>
+                
+                <form id="transcriptionForm">
+                    <div class="form-group">
+                        <label for="data">Data da Ligação:</label>
+                        <input type="date" id="data" name="data" required>
+                        <small>Data em que a ligação foi realizada</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome Completo do Atendente:</label>
+                        <input type="text" id="nomeCompleto" name="nomeCompleto" 
+                               placeholder="Digite o nome completo do atendente" required>
+                        <small>Nome exato conforme registrado na planilha</small>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <span class="btn-text">Buscar e Transcrever</span>
+                        <div class="loading-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+
+                <button class="btn-config" id="configBtn">⚙️ Configurações</button>
+            </div>
+
+            <div id="configModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Configurações do Sistema</h3>
+                        <button class="close-btn" id="closeModal">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="appsScriptUrl">URL do Google Apps Script:</label>
+                            <input type="url" id="appsScriptUrl" 
+                                   placeholder="https://script.google.com/macros/s/.../exec">
+                            <small>Cole aqui a URL do seu Web App implantado</small>
+                        </div>
+                        <button class="btn-primary" id="saveConfig">Salvar Configurações</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultArea" style="display: none;">
+                <div class="result-card">
+                    <h3>Resultado da Transcrição</h3>
+                    <div id="resultContent"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>Como funciona:</h3>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Busca Automática</h4>
+                            <p>Sistema busca na planilha 55PBX pelos dados informados</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Localiza o Áudio</h4>
+                            <p>Encontra automaticamente o link da gravação da ligação</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Transcreve</h4>
+                            <p>Converte o áudio em texto usando Google Cloud AI</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Gera Resumo</h4>
+                            <p>Cria um resumo executivo da conversa</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="requirements">
+                    <h4>Requisitos:</h4>
+                    <ul>
+                        <li>Google Apps Script configurado e implantado</li>
+                        <li>Acesso à planilha 55PBX com as gravações</li>
+                        <li>Dados exatos conforme registrados na planilha</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
     </div>
-    <div id="search-form" class="form card hidden">
-      <label for="date">Data (DD/MM/YYYY)</label>
-      <input type="text" id="date" placeholder="DD/MM/YYYY">
-      <label for="attendant">Nome do Atendente</label>
-      <input type="text" id="attendant" placeholder="Ex: Maria Silva">
-      <button id="search-btn">Buscar</button>
-    </div>
-    <div id="calls-list" class="card hidden">
-      <h2>Selecione a Ligação</h2>
-      <select id="calls-select"></select>
-      <button id="transcribe-btn">Transcrever</button>
-    </div>
-    <div id="result" class="card hidden">
-      <h2>Resultado da Transcrição</h2>
-      <div id="loading" class="hidden">Carregando...</div>
-      <audio id="audio-player" controls></audio>
-      <div id="output"></div>
-    </div>
-  </div>
-  <script src="script.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
