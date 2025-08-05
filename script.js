@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMT4wSEWWC5-f-8K5MM8Ug1TGim2AvXexX4FAIIPgNaQnH68r63RRYolESNWP5nJGpPA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4ZBCQ1QzbQvYwgfbLF9hOfpxtjGOjNuqaDP07EGa1VC2TVrKJG9D8iP4XZDBf5TX-fw/exec';
 
 document.addEventListener('DOMContentLoaded', function() {
   var loginForm = document.getElementById('login-form');
