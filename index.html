@@ -1,1 +1,40 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcrição 55PBX</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Transcrição 55PBX</h1>
+    <div id="login-form" class="form">
+      <label>Usuário:</label>
+      <input type="text" id="username" placeholder="Ex: admin">
+      <label>Senha:</label>
+      <input type="password" id="password" placeholder="Senha">
+      <button id="login-btn">Login</button>
+    </div>
+    <div id="search-form" class="form hidden">
+      <label>Data (DD/MM/YYYY):</label>
+      <input type="text" id="date" placeholder="DD/MM/YYYY">
+      <label>Nome do Atendente:</label>
+      <input type="text" id="attendant" placeholder="Ex: Maria Silva">
+      <button id="search-btn">Buscar</button>
+    </div>
+    <div id="calls-list" class="hidden">
+      <h2>Selecione a Ligação</h2>
+      <select id="calls-select"></select>
+      <button id="transcribe-btn">Transcrever</button>
+    </div>
+    <div id="result" class="hidden">
+      <h2>Resultado</h2>
+      <div id="loading" class="hidden">Carregando...</div>
+      <audio id="audio-player" controls></audio>
+      <div id="output"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
